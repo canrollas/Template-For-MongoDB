@@ -1,24 +1,26 @@
 package com.example.springer;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 
-@SpringBootApplication(exclude = {MongoAutoConfiguration.class})
+@SpringBootApplication
 @RestController
 public class SpringerApplication {
 
-    @Autowired
-    private PersonRepository repository;
+    private final PersonRepository repository;
+
+    public SpringerApplication(PersonRepository repository) {
+        this.repository = repository;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SpringerApplication.class, args);
@@ -30,13 +32,9 @@ public class SpringerApplication {
         myMap.put("Ankara","Rollas");
         return myMap;
     }
+
     @GetMapping(value = "/addQuery")
     public String dataValueAdd() {
-
-        repository.insert(new PersonClass("Mert","Karaca"));
-        repository.insert(new PersonClass("Cagatay","Iba"));
-        repository.insert(new PersonClass("Umutcan","Ceyhan"));
-
 
 
         String emptyString = "";
@@ -44,6 +42,12 @@ public class SpringerApplication {
             emptyString = emptyString +"\n"+customer.toString();
         }
         return emptyString;
+
+    }
+    @GetMapping(value = "/addPersonToDB")
+    public List<PersonClass> personAdd() {
+        repository.insert(new PersonClass("Can","Rollas"));
+        return Collections.singletonList(repository.findByName("Can"));
 
     }
 }
